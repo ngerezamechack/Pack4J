@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="562.0" prefWidth="947.0" type="BorderPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <right>
+      <BorderPane prefHeight="499.0" prefWidth="502.0" BorderPane.alignment="CENTER">
+         <center>
+            <TextArea fx:id="tout" editable="false" focusTraversable="false" prefHeight="531.0" prefWidth="381.0" wrapText="true" BorderPane.alignment="CENTER">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font></TextArea>
+         </center>
+         <BorderPane.margin>
+            <Insets right="5.0" top="5.0" />
+         </BorderPane.margin>
+      </BorderPane>
+   </right>
+   <left>
+      <AnchorPane prefHeight="504.0" prefWidth="444.0" BorderPane.alignment="CENTER">
+         <children>
+            <TextField fx:id="tdir" editable="false" layoutX="137.0" layoutY="137.0" prefHeight="25.0" prefWidth="261.0" promptText="directory contain all jars" />
+            <TextField fx:id="tclass" layoutX="138.0" layoutY="230.0" prefHeight="25.0" prefWidth="202.0" promptText="main class" />
+            <TextField fx:id="tname" layoutX="139.0" layoutY="284.0" prefHeight="25.0" prefWidth="199.0" promptText="App name" />
+            <TextField fx:id="tversion" layoutX="138.0" layoutY="336.0" prefHeight="25.0" prefWidth="199.0" promptText="App version" />
+            <TextField fx:id="tvendor" layoutX="140.0" layoutY="382.0" prefHeight="25.0" prefWidth="197.0" promptText="vendor" />
+            <Button layoutX="402.0" layoutY="137.0" mnemonicParsing="false" onAction="#cdir" text="..." />
+            <Button layoutX="157.0" layoutY="470.0" mnemonicParsing="false" onAction="#packaging" prefHeight="25.0" prefWidth="164.0" text="Package" />
+            <Button layoutX="403.0" layoutY="88.0" mnemonicParsing="false" onAction="#cicon" text="..." />
+            <Label layoutX="47.0" layoutY="21.0" text="Pack4J">
+               <font>
+                  <Font size="32.0" />
+               </font></Label>
+            <Label layoutX="45.0" layoutY="141.0" text="App Directory" />
+            <Label layoutX="45.0" layoutY="187.0" text="Main jar" />
+            <Label layoutX="45.0" layoutY="234.0" text="Main Class" />
+            <Label layoutX="45.0" layoutY="288.0" text="App Name" />
+            <Label layoutX="45.0" layoutY="340.0" text="App Version" />
+            <Label layoutX="45.0" layoutY="386.0" text="Vendor" />
+            <Label layoutX="45.0" layoutY="92.0" text="Icon" />
+            <TextField fx:id="ticon" editable="false" layoutX="139.0" layoutY="88.0" prefHeight="25.0" prefWidth="259.0" promptText="icon" />
+            <ComboBox fx:id="ttype" layoutX="140.0" layoutY="421.0" prefWidth="150.0" promptText="Package type" />
+            <Label layoutX="44.0" layoutY="425.0" text="Type" />
+            <ComboBox fx:id="tjar" layoutX="140.0" layoutY="183.0" onAction="#jartext" prefHeight="25.0" prefWidth="198.0" promptText="Main jar" />
+         </children>
+      </AnchorPane>
+   </left>
+   <bottom>
+      <FlowPane alignment="CENTER" hgap="10.0" prefHeight="58.0" prefWidth="861.0" BorderPane.alignment="CENTER">
+         <children>
+            <ImageView fitHeight="47.0" fitWidth="179.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../images/NGEREZAs.png" />
+               </image>
+            </ImageView>
+            <Label text="ngerezam@gmail.com" />
+         </children>
+      </FlowPane>
+   </bottom>
+</fx:root>
