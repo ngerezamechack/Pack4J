@@ -8,7 +8,6 @@ package controlers;
 import beans.Noutput;
 import beans.Packager;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.InputStreamReader;
 
 /**
@@ -21,10 +20,10 @@ public class Packaging {
         
         
         String jpackage = "jpackage --type " + p.getType() + " --runtime-image " + p.getRuntime() + " --input " + p.getAppDir() + " "
-                + " --main-jar " + p.getMainJar() + " --name " + p.getAppName() + " --icon " + p.getIcon()
-                + " --win-menu-group " + p.getAppName() + " --main-class " + p.getMainClass() + " "
+                + " --main-jar " + p.getMainJar() + " --name \"" + p.getAppName() + "\" --icon " + p.getIcon()
+                + " --win-menu-group \"" + p.getAppName() + "\" --main-class " + p.getMainClass() + " "
                 + " --verbose --win-shortcut --win-menu --win-dir-chooser --dest "+p.getDest()
-                + " --copyright " + p.getAppVendor() + " --vendor " + p.getAppVendor() + " --app-version " + p.getAppVersion();
+                + " --copyright \"" + p.getAppVendor() + "\" --vendor \"" + p.getAppVendor() + "\" --app-version " + p.getAppVersion();
         out.setText(jpackage);
 
         

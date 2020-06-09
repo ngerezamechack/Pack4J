@@ -55,6 +55,12 @@ public class Dependencies {
             l = sb.toString();
             modules = l;
             modules = modules.replace(" ", "");
+            
+            if(!modules.isBlank()){
+                modules+=",jdk.localedata";
+            }else{
+                modules+="jdk.localedata";
+            }
 
             p.setDependencies(modules);
             return pc.exitValue() == 0;

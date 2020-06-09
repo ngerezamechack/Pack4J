@@ -19,7 +19,7 @@ public class Runtime {
     public static boolean jlink(Packager p,Noutput out){
         
         String jlink = "jlink --verbose --add-modules "+p.getDependencies()+" "
-                + "--no-header-files --no-man-pages --strip-debug --compress=2 --output "+p.getRuntime();
+                + "--include-locales=fr --no-header-files --no-man-pages --strip-debug --compress=2 --output "+p.getRuntime();
         
         out.setText(jlink);
         ProcessBuilder pb = new ProcessBuilder("cmd.exe", "/c", jlink);
