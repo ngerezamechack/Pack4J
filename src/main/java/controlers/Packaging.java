@@ -7,8 +7,13 @@ package controlers;
 
 import beans.Noutput;
 import beans.Packager;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.File;
+import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.DefaultExecuteResultHandler;
+import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.exec.ExecuteWatchdog;
+import org.apache.commons.exec.Executor;
+import org.apache.commons.exec.PumpStreamHandler;
 
 /**
  *
@@ -16,10 +21,10 @@ import java.io.InputStreamReader;
  */
 public class Packaging {
 
-    public static boolean jpackage(Packager p, Noutput out) {
+    public static boolean jpackage(Packager p, Noutput out) throws Exception {
         
         
-        String jpackage = "jpackage --type " + p.getType() + " --runtime-image " + p.getRuntime() + " --input " + p.getAppDir() + " "
+        String jpackage = " --type " + p.getType() + " --runtime-image " + p.getRuntime() + " --input " + p.getAppDir() + " "
                 + " --main-jar " + p.getMainJar() + " --name \"" + p.getAppName() + "\" --icon " + p.getIcon()
                 + " --win-menu-group \"" + p.getAppName() + "\" --main-class " + p.getMainClass() + " "
                 + " --verbose --win-shortcut --win-menu --win-dir-chooser --dest "+p.getDest()
@@ -27,29 +32,24 @@ public class Packaging {
         out.setText(jpackage);
 
         
-        ProcessBuilder pb;
-        Process pc;
-        BufferedReader in;
+        String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator;
+        CommandLine cl = new CommandLine(javaBin + "jpackage")
+                .addArguments(jpackage);
+
+        out.setText(cl.getExecutable()+jpackage);
         
-        StringBuilder sb;
-        String l = "";
-        
-        try {
+        DefaultExecuteResultHandler rh = new DefaultExecuteResultHandler();
+        ExecuteWatchdog wd = new ExecuteWatchdog(ExecuteWatchdog.INFINITE_TIMEOUT);
+        Executor exec = new DefaultExecutor();
 
-            pb = new ProcessBuilder("cmd.exe","/c",jpackage);
-            pc = pb.start();
+        PumpStreamHandler psh = new PumpStreamHandler(out);
 
-            sb = new StringBuilder();
-            in = new BufferedReader(new InputStreamReader(pc.getInputStream()));
+        exec.setStreamHandler(psh);
+        exec.setWatchdog(wd);
 
-            while ((l = in.readLine()) != null) {
-                out.setText(l);
-            }
+        exec.execute(cl, rh);
+        rh.waitFor();
 
-            return pc.exitValue() == 0;
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return false;
-        }
+        return exec.isFailure(1);
     }
 }

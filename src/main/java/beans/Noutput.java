@@ -17,6 +17,7 @@ import javafx.scene.control.TextArea;
 public class Noutput extends OutputStream {
 
     private TextArea out;
+    private String md = "";
 
     public Noutput(TextArea out) {
         this.out = out;
@@ -24,18 +25,41 @@ public class Noutput extends OutputStream {
 
     @Override
     public void write(int b) throws IOException {
-        out.appendText(new StringBuilder().append((char) b).toString());
+        Platform.runLater(()->{out.appendText(new StringBuilder().append((char) b).toString());});
     }
 
     public void setText(String str) {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                out.appendText(str);
-                out.appendText("\n");
-                out.end();
-            }
+        Platform.runLater(() -> {
+            out.appendText(str);
+            out.appendText("\n");
+            out.end();
         });
     }
 
+    public String getModules(){
+        return traitement().replace(" ", "");
+    }
+    
+    
+    private String traitement(){
+        out.getText().lines().forEach((line)->{
+            line = removePackage(line);
+            if(!line.contains("jdk8") && !md.contains(line)){
+                if(!md.isBlank()) md +=",";
+                md += line;
+            }
+        });
+        
+        return md += ",jdk.localedata";
+    }
+    
+    
+    //remove package
+    private static String removePackage(String m) {
+        if (m.contains("/")) {
+            return m.substring(0, m.indexOf("/"));
+        } else {
+            return m;
+        }
+    }
 }

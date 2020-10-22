@@ -1,4 +1,0 @@
---patch-module
-easyPackager=_
---add-reads
-easyPackager=ALL-UNNAMED

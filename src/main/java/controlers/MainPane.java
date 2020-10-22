@@ -39,8 +39,8 @@ public class MainPane extends BorderPane {
 
     private Packager pac = new Packager();
 
-    private DirectoryChooser dc;
-    private FileChooser ic;
+    private DirectoryChooser dc = new DirectoryChooser();
+    private FileChooser ic = new FileChooser();
     private File file, icon;
     private Noutput out;
 
@@ -61,19 +61,22 @@ public class MainPane extends BorderPane {
 
     @FXML
     private void cicon(ActionEvent ev) {
-        ic = new FileChooser();
-        ic.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Icon", "*.ico", "*.icns"));
+        
+        ic.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Icon", "*.ico", "*.icns", "*.svg"));
 
         if ((icon = ic.showOpenDialog(null)) != null) {
-            if (icon.exists() || (file != null)) {
+            if (icon.exists() ) {
                 ticon.setText(icon.getAbsolutePath());
             }
+            dc.setInitialDirectory(icon.getParentFile());
+            ic.setInitialDirectory(icon.getParentFile());
+            
         }
     }
 
     @FXML
     private void cdir(ActionEvent ev) {
-        dc = new DirectoryChooser();
+        
         dc.setTitle("Choose Jars dir");
 
         if ((file = dc.showDialog(null)) != null) {
@@ -81,6 +84,8 @@ public class MainPane extends BorderPane {
             tjar.getItems().clear();
             tjar.getItems().add("");
 
+            dc.setInitialDirectory(file.getParentFile());
+            ic.setInitialDirectory(file.getParentFile());
             //jars
             if (file.exists() && (file != null) && file.isDirectory()) {
 
@@ -100,9 +105,11 @@ public class MainPane extends BorderPane {
     @FXML
     private void packaging(ActionEvent ev) {
 
-        if (Boite.verifier(tdir, tjar, tclass, tname, tversion, tvendor, ttype,ticon)) {
+        if (Boite.verifier(tdir, tjar, tclass, tname, tversion, tvendor, ttype, ticon)) {
             if (Boite.showConfirmation("Execute?", "")) {
 
+                Boite.vider(tout);
+                
                 //initialisation
                 pac = new Packager();
                 pac.setAppDir(tdir.getText() + File.separatorChar);
@@ -140,9 +147,9 @@ public class MainPane extends BorderPane {
     }
 
     @FXML
-    private void jartext(ActionEvent ev) {
+    private void jartext() {
         String jar;
-        if (!(jar = tjar.getSelectionModel().getSelectedItem()).isBlank() || tjar.getSelectionModel() != null) {
+        if ((jar = tjar.getValue())  != null) {
             String main = "";
             main = getMainClass(tdir.getText() + File.separator + jar);
             tclass.setText(main);
@@ -159,15 +166,12 @@ public class MainPane extends BorderPane {
         }
 
     }
-    
-    
-    
-    private void vider(){
+
+    private void vider() {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                Boite.vider(tdir, tjar, tclass, tname, tversion, tvendor, ttype,ticon);
-                tjar.getItems().clear();
+                Boite.vider(tdir, tjar, tclass, tname, tversion, tvendor, ttype, ticon);
             }
         });
     }

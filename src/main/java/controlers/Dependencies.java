@@ -7,8 +7,13 @@ package controlers;
 
 import beans.Noutput;
 import beans.Packager;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.File;
+import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.DefaultExecuteResultHandler;
+import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.exec.ExecuteWatchdog;
+import org.apache.commons.exec.Executor;
+import org.apache.commons.exec.PumpStreamHandler;
 
 /**
  *
@@ -16,68 +21,28 @@ import java.io.InputStreamReader;
  */
 public class Dependencies {
 
-    public static boolean jdeps(Packager p, Noutput out) {
+    public static boolean jdeps(Packager p, Noutput out) throws Exception {
 
-        
-        String jdeps = "jdeps --ignore-missing-deps --no-recursive  --list-deps " + p.getAppDir() + "*.jar";
-        ProcessBuilder pb = new ProcessBuilder("cmd.exe", "/c", jdeps);
-        out.setText(jdeps);
+        String jdepsArgs = " --ignore-missing-deps --no-recursive  --list-deps " + p.getAppDir() + "*.jar";
 
-        StringBuilder sb = new StringBuilder();
-        String l = "";
-        String modules;
-        try {
+        String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator;
+        CommandLine cl = new CommandLine(javaBin + "jdeps")
+                .addArguments(jdepsArgs);
 
-            Process pc = pb.start();
+        DefaultExecuteResultHandler rh = new DefaultExecuteResultHandler();
+        ExecuteWatchdog wd = new ExecuteWatchdog(ExecuteWatchdog.INFINITE_TIMEOUT);
+        Executor exec = new DefaultExecutor();
 
-            BufferedReader in = new BufferedReader(new InputStreamReader(pc.getInputStream()));
+        PumpStreamHandler psh = new PumpStreamHandler(out);
 
-            while ((l = in.readLine()) != null) {
+        exec.setStreamHandler(psh);
+        exec.setWatchdog(wd);
 
-                l = removePackage(l);
+        exec.execute(cl, rh);
+        rh.waitFor();
 
-                if (!sb.toString().contains(l) && !l.contains("jdk8")) {
-                    if (sb.toString().contains("java.base") || l.contains("java.base")) {
-                        if (!sb.toString().isBlank()) {
-                            sb.append(",");
-                        }
+        return exec.isFailure(1);
 
-                        sb.append(l);
-                        out.setText(l);
-                    } else {
-                        sb.append(l);
-                        out.setText(l);
-                        return false;
-                    }
-                }
-            }
-
-            l = sb.toString();
-            modules = l;
-            modules = modules.replace(" ", "");
-            
-            if(!modules.isBlank()){
-                modules+=",jdk.localedata";
-            }else{
-                modules+="jdk.localedata";
-            }
-
-            p.setDependencies(modules);
-            return pc.exitValue() == 0;
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return false;
-        }
-
-    }
-
-    //remove package
-    private static String removePackage(String m) {
-        if (m.contains("/")) {
-            return m.substring(0, m.lastIndexOf("/"));
-        } else {
-            return m;
-        }
     }
 
 }

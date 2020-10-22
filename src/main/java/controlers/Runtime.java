@@ -7,8 +7,16 @@ package controlers;
 
 import beans.Noutput;
 import beans.Packager;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Comparator;
+import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.DefaultExecuteResultHandler;
+import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.exec.ExecuteWatchdog;
+import org.apache.commons.exec.Executor;
+import org.apache.commons.exec.PumpStreamHandler;
 
 /**
  *
@@ -16,32 +24,38 @@ import java.io.InputStreamReader;
  */
 public class Runtime {
     
-    public static boolean jlink(Packager p,Noutput out){
+    public static boolean jlink(Packager p,Noutput out) throws Exception{
         
-        String jlink = "jlink --verbose --add-modules "+p.getDependencies()+" "
+        delete(p.getRuntime());
+        String jlink = " --verbose --add-modules "+out.getModules()+" "
                 + "--include-locales=fr --no-header-files --no-man-pages --strip-debug --compress=2 --output "+p.getRuntime();
         
-        out.setText(jlink);
-        ProcessBuilder pb = new ProcessBuilder("cmd.exe", "/c", jlink);
+        
+        String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator;
+        CommandLine cl = new CommandLine(javaBin + "jlink")
+                .addArguments(jlink);
 
-        StringBuilder sb = new StringBuilder();
-        String l = "";
-        try {
+        out.setText(cl.getExecutable()+jlink);
+        
+        DefaultExecuteResultHandler rh = new DefaultExecuteResultHandler();
+        ExecuteWatchdog wd = new ExecuteWatchdog(ExecuteWatchdog.INFINITE_TIMEOUT);
+        Executor exec = new DefaultExecutor();
 
-            Process pc = pb.start();
+        PumpStreamHandler psh = new PumpStreamHandler(out);
 
-             BufferedReader in = new BufferedReader(new InputStreamReader(pc.getInputStream()));
+        exec.setStreamHandler(psh);
+        exec.setWatchdog(wd);
 
-            while ((l = in.readLine()) != null) {
-                out.setText(l);
-                if(l.contains("Error"))return false;
-            }
+        exec.execute(cl, rh);
+        rh.waitFor();
 
-            return pc.exitValue() == 0;
-            
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return false;
-        }
+        return exec.isFailure(1);
+    }
+    
+    private static File f;
+    private static void delete(String p) throws Exception{
+        f = new File(p);
+        if(f.exists())
+        Files.walk(f.toPath()).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
     }
 }

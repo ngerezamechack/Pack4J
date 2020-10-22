@@ -1,0 +1,2 @@
+jpackage --type app-image --runtime-image D:\jdks\jdk14-32 --input app --icon package.ico --main-jar Pack4J-1.0.jar --name "PACK4J"  --main-class vues.Main --verbose  --copyright Ngereza --vendor Ngereza --app-version 1.1
+pause

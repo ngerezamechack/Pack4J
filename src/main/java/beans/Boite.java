@@ -120,34 +120,23 @@ public class Boite {
         for (Object o : ob) {
             //TextField
             if (o instanceof TextField) {
-                TextField tf = (TextField) o;
-                if (!tf.getText().isBlank()) {
-                    tf.clear();
-                }
+                ((TextField) o).clear();
             }
 
             //TextArea
             if (o instanceof TextArea) {
-                TextArea ta = (TextArea) o;
-                if (!ta.getText().isBlank()) {
-                    ta.clear();
-                }
+                ((TextArea) o).clear();
+                
             }
 
             //comboBox
             if (o instanceof ComboBox) {
-                ComboBox<String> cb = (ComboBox<String>) o;
-                if (!cb.getSelectionModel().isEmpty()) {
-                    cb.getSelectionModel().clearSelection();
-                }
+                ((ComboBox<String>) o).getSelectionModel().clearSelection();
             }
 
             //datepicker
             if (o instanceof DatePicker) {
-                DatePicker dp = (DatePicker) o;
-                if (!dp.getEditor().getText().isBlank()) {
-                    dp.setValue(null);
-                }
+                ((DatePicker) o).setValue(null);
             }
         }
 
